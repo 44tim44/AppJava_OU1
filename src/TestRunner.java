@@ -73,6 +73,8 @@ public class TestRunner  implements Runnable
     {
         int counter = 0;
         int succeeded = 0;
+        int failed = 0;
+        int crashed = 0;
         for (String methodName : methodNames)
         {
             if (methodName.startsWith("test"))
@@ -96,6 +98,7 @@ public class TestRunner  implements Runnable
                     else
                     {
                         printToUI("\u274C Test " + methodName + " failed.");
+                        failed++;
                     }
 
                     if(methodNames.contains("tearDown"))
@@ -111,12 +114,20 @@ public class TestRunner  implements Runnable
                 catch (InvocationTargetException e)
                 {
                     printToUI("\u274C Test " + methodName + " failed due to " + e.getCause());
+                    crashed++;
                 }
             }
 
         }
-        printToUI(succeeded + " of " + counter + " tests succeeded.");
-        printToUI("----------------");
+        printToUI("-------- RESULTS --------");
+        printToUI(succeeded + " of " + counter + " test(s) succeeded.");
+        if(failed > 0) {
+            printToUI(failed + " test(s) failed.");
+        }
+        if(crashed > 0) {
+            printToUI(crashed + " test(s) failed due to internal exceptions.");
+        }
+        printToUI("---------- END ----------");
 
     }
 
