@@ -33,7 +33,7 @@ class ClearButtonListener implements ActionListener
      */
     public void actionPerformed(ActionEvent event)
     {
-        textArea.setText("");
+        SwingUtilities.invokeLater(() -> textArea.setText(""));
     }
 
 
