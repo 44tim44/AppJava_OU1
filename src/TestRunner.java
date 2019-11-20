@@ -5,7 +5,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -50,7 +49,7 @@ public class TestRunner  implements Runnable
     @Override
     public void run()
     {
-        List methodsList = Arrays.asList(testFile.getMethods());
+        Method[] methodsList = testFile.getMethods();
         List<String> methodNames = new ArrayList<>();
 
         for (Object method : methodsList)
