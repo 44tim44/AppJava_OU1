@@ -117,6 +117,7 @@ public class TestRunner  implements Runnable
 
         }
         printToUI(succeeded + " of " + counter + " tests succeeded.");
+        printToUI("----------------");
 
     }
 

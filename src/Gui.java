@@ -81,7 +81,12 @@ public class Gui
         logArea.setEditable(false);
         logArea.setLineWrap(true);
         logArea.setWrapStyleWord(true);
-        midPanel.add(logArea, BorderLayout.CENTER);
+
+        JScrollPane scroll = new JScrollPane (logArea);
+        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        midPanel.add(scroll, BorderLayout.CENTER);
 
         return midPanel;
     }
