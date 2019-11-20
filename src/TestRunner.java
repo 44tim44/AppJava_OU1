@@ -123,7 +123,7 @@ public class TestRunner  implements Runnable
 
 
     /**
-     * Invokes the method setUp in the .class file.
+     * Invokes a method in the .class file.
      *
      * @param instance The instance of the .class file being tested.
      * @param name The name of the method to be invoked
