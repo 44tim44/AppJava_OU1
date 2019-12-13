@@ -7,14 +7,13 @@ import java.io.File;
  * Public attribute path points to the path/URL the program is run from.
  *
  * @author Timmy Eklund
- * @version 12 nov 2019
+ * @version 13 dec 2019
  */
 @SuppressWarnings("WeakerAccess")
 public class Start
 {
     private static File jarFile = new File(Start.class.getProtectionDomain().getCodeSource().getLocation().getPath());
     public static String path = jarFile.getParent();
-    public static Gui gui;
 
     /**
      * The main method which starts the program

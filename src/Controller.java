@@ -1,30 +1,44 @@
 import javax.swing.*;
-import java.io.File;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * The controller class, which initializes the GUI, sets ButtonListener and executes logic
+ * related to the testing of a .class file using a TestRunner.
+ *
+ * @author Timmy Eklund
+ * @version 13 dec 2019
+ */
+@SuppressWarnings("WeakerAccess")
 public class Controller
 {
-    //private File jarFile = new File(Start.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-    //public String path = jarFile.getParent();
     private Gui gui;
 
-
+    /**
+     * Creates the GUI on the EDT.
+     */
     public void createGUI()
     {
         SwingUtilities.invokeLater(() -> {
             gui = new Gui();
-            setListeners();
+            setButtonListeners();
             gui.show();
         });
     }
 
-    private void setListeners()
+    /**
+     * Maps the Buttons' ActionListeners in the GUI to a corresponding method in Controller.
+     */
+    private void setButtonListeners()
     {
         gui.setRunButtonListener(e -> runButton());
         gui.setClearButtonListener(e -> clearButton());
     }
 
+    /**
+     * The method which is called when the Run-button in the GUI is pressed.
+     * Creates a SwingWorker and runs the testing of a .class file using a TestRunner.
+     */
     private void runButton(){
         String inputField = gui.getInputFileField();
         SwingWorker sw = new SwingWorker<String, String>()
@@ -48,9 +62,6 @@ public class Controller
             @Override
             protected void process(List<String> chunks)
             {
-                // define what the event dispatch thread
-                // will do with the intermediate results received
-                // while the thread is executing
                 String str = chunks.get(chunks.size()-1);
                 Controller.this.gui.printToLog(str);
             }
@@ -58,21 +69,14 @@ public class Controller
             @Override
             protected void done()
             {
-                // this method is called when the background
-                // thread finishes execution
                 try
                 {
                     String str = get();
                     Controller.this.gui.printToLog(str);
-
                 }
-                catch (InterruptedException e)
+                catch (InterruptedException | ExecutionException e)
                 {
-                    e.printStackTrace();
-                }
-                catch (ExecutionException e)
-                {
-                    e.printStackTrace();
+                    Controller.this.gui.printToLog(e.toString());
                 }
             }
         };
@@ -80,6 +84,10 @@ public class Controller
         sw.execute();
     }
 
+    /**
+     * The method which is called when the Clear-button in the GUI is pressed.
+     * Asks the EDT to use the GUI method clearText() which empties the body of the log.
+     */
     private void clearButton() {
         SwingUtilities.invokeLater(() -> gui.clearText());
     }

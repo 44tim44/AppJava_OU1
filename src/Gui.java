@@ -8,7 +8,7 @@ import java.awt.event.FocusEvent;
  * The GUI for the small program MyUnitTester
  *
  * @author Timmy Eklund
- * @version 12 nov 2019
+ * @version 13 dec 2019
  */
 @SuppressWarnings("WeakerAccess")
 public class Gui
@@ -65,7 +65,6 @@ public class Gui
         topPanel.add(inputFileField, BorderLayout.CENTER);
 
         this.runButton = new JButton("Run File");
-        //runButton.addActionListener(new RunButtonListener(inputFileField, logArea));
         topPanel.add(runButton,BorderLayout.EAST);
         return topPanel;
     }
@@ -107,7 +106,6 @@ public class Gui
         botPanel.setLayout(new BorderLayout());
 
         this.clearButton = new JButton("Clear Log");
-        //clearButton.addActionListener(new ClearButtonListener(logArea));
         botPanel.add(clearButton,BorderLayout.EAST);
 
         return botPanel;
@@ -131,20 +129,35 @@ public class Gui
         logArea.append(str + "\n");
     }
 
+    /**
+     * Clears the Log JTextArea
+     */
     public void clearText()
     {
         logArea.setText("");
     }
 
+    /**
+     * Makes the content of the JTextField inputFileField publicly accessible
+     * @return Returns the text in the inputFileField as a string
+     */
     public String getInputFileField() {
         return inputFileField.getText();
     }
 
+    /**
+     * Adds an ActionListener to the Run-button
+     * @param actionListener The ActionListener which will be called when the button is pressed
+     */
     public void setRunButtonListener(ActionListener actionListener)
     {
         runButton.addActionListener(actionListener);
     }
 
+    /**
+     * Adds an ActionListener to the Clear-button
+     * @param actionListener The ActionListener which will be called when the button is pressed
+     */
     public void setClearButtonListener(ActionListener actionListener)
     {
         clearButton.addActionListener(actionListener);
