@@ -2,7 +2,7 @@
   <artifact type="jar" name="AppJava_OU1:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/AppJava_OU1_jar</output-path>
     <root id="archive" name="AppJava_OU1.jar">
-      <element id="module-output" name="AppJava_OU1" />
+      <element id="module-output" name="AppJava_OU1_v2" />
     </root>
   </artifact>
 </component>

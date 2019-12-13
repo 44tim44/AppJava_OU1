@@ -1,6 +1,7 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.MalformedURLException;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.*;
 
@@ -41,25 +42,60 @@ class RunButtonListener implements ActionListener
      */
     public void actionPerformed(ActionEvent event)
     {
-        try
-        {
-            Thread t1 = new Thread(new TestRunner("file://" + Start.path + "\\", inputField.getText()));
-            t1.start();
-        }
-        catch (MalformedURLException e)
-        {
-            outArea.append("An error occurred when loading " + inputField.getText() + ".class.\n" + e + "\n");
-        }
-        catch (ClassNotFoundException e)
-        {
-            outArea.append(inputField.getText() + ".class does not exist at:\n" + Start.path + "\\" + inputField.getText() + "\n");
-        }
-        catch (NotTestClassException e)
-        {
-            outArea.append(inputField.getText() + ".class does not implement the interface TestClass.\n");
-        }
+        //Thread t1 = new Thread(new TestRunner("file://" + Start.path + "\\", inputField.getText()));
+        //t1.start();
 
+        SwingWorker sw = new SwingWorker<String, String>()
+        {
 
+            @Override
+            protected String doInBackground() throws Exception
+            {
+                TestRunner tr = new TestRunner("file://" + Start.path + "\\", inputField.getText());
+                publish(tr.getOutput());
+                if(tr.isReady())
+                {
+                    return tr.run();
+                }
+                else
+                {
+                    return "The test has been cancelled.";
+                }
+            }
+
+            @Override
+            protected void process(List<String> chunks)
+            {
+                // define what the event dispatch thread
+                // will do with the intermediate results received
+                // while the thread is executing
+                String str = chunks.get(chunks.size()-1);
+                Start.gui.printToLog(str);
+            }
+
+            @Override
+            protected void done()
+            {
+                // this method is called when the background
+                // thread finishes execution
+                try
+                {
+                    String str = get();
+                    Start.gui.printToLog(str);
+
+                }
+                catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+                catch (ExecutionException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        sw.execute();
     }
 
 }

@@ -17,38 +17,64 @@ import java.util.List;
  * @version 12 nov 2019
  */
 @SuppressWarnings("WeakerAccess")
-public class TestRunner  implements Runnable
+public class TestRunner
 {
     private Class<?> testFile;
+    private StringBuilder output = new StringBuilder("");
+    private boolean ready = true;
 
-    public TestRunner(String folderURL, String filename) throws MalformedURLException, ClassNotFoundException, NotTestClassException
+    public TestRunner(String folderURL, String filename)
     {
-        System.out.println(folderURL + filename);
-        URL[] urls = new URL[]{ new URL(folderURL) };
+        try {
+            System.out.println(folderURL + filename);
+            URL[] urls = new URL[]{ new URL(folderURL) };
 
-        ClassLoader loader = new URLClassLoader(urls);
+            ClassLoader loader = new URLClassLoader(urls);
 
-        testFile = loader.loadClass(filename);
+            testFile = loader.loadClass(filename);
 
-        if(!TestClass.class.isAssignableFrom(testFile))
-        {
-            throw new NotTestClassException();
+            if(!TestClass.class.isAssignableFrom(testFile))
+            {
+                throw new NotTestClassException();
+            }
+            else
+            {
+                output.append(filename + ".class loaded successfully.\n");
+            }
         }
-        else
+        catch (MalformedURLException e)
         {
-            printToUI(filename + ".class loaded successfully.");
+            output.append("An error occurred when loading " + filename + ".class.\n" + e + "\n");
+            ready = false;
+        }
+        catch (ClassNotFoundException e)
+        {
+            output.append(filename + ".class does not exist at:\n" + Start.path + "\\" + filename + "\n");
+            ready = false;
+        }
+        catch (NotTestClassException e)
+        {
+            output.append(filename + ".class does not implement the interface TestClass.\n");
+            ready = false;
         }
 
     }
 
+    public String getOutput() {
+        return output.toString();
+    }
+
+    public boolean isReady() {
+        return ready;
+    }
+
     /**
-     * The run()-method  of a Runnable class.
      * Creates a List of Strings with the names of all the methods in the .class file and passes them to
      * the runTest method.
      */
-    @Override
-    public void run()
+    public String run()
     {
+        output = new StringBuilder("");
         Method[] methodsList = testFile.getMethods();
         List<String> methodNames = new ArrayList<>();
 
@@ -59,6 +85,7 @@ public class TestRunner  implements Runnable
 
         runTest(methodNames);
 
+        return output.toString();
     }
 
     /**
@@ -71,6 +98,7 @@ public class TestRunner  implements Runnable
      */
     private void runTest(List<String> methodNames)
     {
+        output.append("--------- START ---------\n");
         int counter = 0;
         int succeeded = 0;
         int failed = 0;
@@ -92,12 +120,12 @@ public class TestRunner  implements Runnable
 
                     if((Boolean) testMethod.invoke(instance))
                     {
-                        printToUI("\u2713 Test " + methodName + " succeeded.");
+                        output.append("\u2713 Test " + methodName + " succeeded.\n");
                         succeeded++;
                     }
                     else
                     {
-                        printToUI("\u274C Test " + methodName + " failed.");
+                        output.append("\u274C Test " + methodName + " failed.\n");
                         failed++;
                     }
 
@@ -109,25 +137,25 @@ public class TestRunner  implements Runnable
                 }
                 catch (NoSuchMethodException | IllegalAccessException | InstantiationException e)
                 {
-                    printToUI("ERROR - Testing of " + methodName + " failed " + e);
+                    output.append("ERROR - Testing of " + methodName + " failed " + e + "\n");
                 }
                 catch (InvocationTargetException e)
                 {
-                    printToUI("\u274C Test " + methodName + " failed due to " + e.getCause());
+                    output.append("\u274C Test " + methodName + " failed due to " + e.getCause() + "\n");
                     crashed++;
                 }
             }
 
         }
-        printToUI("-------- RESULTS --------");
-        printToUI(succeeded + " of " + counter + " test(s) succeeded.");
+        output.append("-------- RESULTS --------\n");
+        output.append(succeeded + " of " + counter + " test(s) succeeded.\n");
         if(failed > 0) {
-            printToUI(failed + " test(s) failed.");
+            output.append(failed + " test(s) failed.\n");
         }
         if(crashed > 0) {
-            printToUI(crashed + " test(s) failed due to internal exceptions.");
+            output.append(crashed + " test(s) failed due to internal exceptions.\n");
         }
-        printToUI("---------- END ----------");
+        output.append("---------- END ----------\n");
 
     }
 
@@ -149,21 +177,11 @@ public class TestRunner  implements Runnable
         }
         catch (NoSuchMethodException | IllegalAccessException e)
         {
-            printToUI("ERROR - " + name + " failed " + e);
+            output.append("ERROR - " + name + " failed " + e + "\n");
         }
         catch (InvocationTargetException e)
         {
-            printToUI("ERROR - " + name + " failed " + e.getCause());
+            output.append("ERROR - " + name + " failed " + e.getCause() + "\n");
         }
-    }
-
-    /**
-     * Prints a message in the GUI.
-     *
-     * @param str The message to be printed in the GUI.
-     */
-    public void printToUI(String str)
-    {
-        SwingUtilities.invokeLater(() -> Start.gui.printToLog(str));
     }
 }

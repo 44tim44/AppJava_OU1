@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
@@ -14,6 +15,9 @@ public class Gui
 {
     private JFrame frame;
     private JTextArea logArea;
+    private JTextField inputFileField;
+    private JButton runButton;
+    private JButton clearButton;
 
     /**
      * Constructor for the GUI
@@ -49,7 +53,7 @@ public class Gui
         topPanel.setBorder(BorderFactory.createTitledBorder("File"));
         topPanel.setLayout(new BorderLayout());
 
-        JTextField inputFileField = new JTextField("Enter a filename...");
+        inputFileField = new JTextField("Enter a filename...");
         inputFileField.addFocusListener(new FocusAdapter()
         {
             public void focusGained(FocusEvent e)
@@ -60,8 +64,8 @@ public class Gui
         });
         topPanel.add(inputFileField, BorderLayout.CENTER);
 
-        JButton runButton = new JButton("Run File");
-        runButton.addActionListener(new RunButtonListener(inputFileField, logArea));
+        this.runButton = new JButton("Run File");
+        //runButton.addActionListener(new RunButtonListener(inputFileField, logArea));
         topPanel.add(runButton,BorderLayout.EAST);
         return topPanel;
     }
@@ -102,8 +106,8 @@ public class Gui
         botPanel.setBorder(BorderFactory.createTitledBorder("Buttons"));
         botPanel.setLayout(new BorderLayout());
 
-        JButton clearButton = new JButton("Clear Log");
-        clearButton.addActionListener(new ClearButtonListener(logArea));
+        this.clearButton = new JButton("Clear Log");
+        //clearButton.addActionListener(new ClearButtonListener(logArea));
         botPanel.add(clearButton,BorderLayout.EAST);
 
         return botPanel;
@@ -126,6 +130,25 @@ public class Gui
     {
         logArea.append(str + "\n");
     }
-    
-    
+
+    public void clearText()
+    {
+        logArea.setText("");
+    }
+
+    public String getInputFileField() {
+        return inputFileField.getText();
+    }
+
+    public void setRunButtonListener(ActionListener actionListener)
+    {
+        runButton.addActionListener(actionListener);
+    }
+
+    public void setClearButtonListener(ActionListener actionListener)
+    {
+        clearButton.addActionListener(actionListener);
+    }
+
+
 }

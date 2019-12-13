@@ -46,9 +46,7 @@ public class Start
             System.out.println("Illegal Access");
         }
 
-        SwingUtilities.invokeLater(() -> {
-            gui = new Gui();
-            gui.show();
-        });
+        Controller controller = new Controller();
+        controller.createGUI();
     }
 }
